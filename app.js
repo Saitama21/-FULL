@@ -276,7 +276,16 @@
   };
 
   function applyTheme(){
-    const pref=state.settings.theme;const dark=pref==='dark'||(pref==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=dark?'dark':'light';$('#themeSelect').value=pref;
+    const pref=state.settings.theme;
+    const dark=pref==='dark'||(pref==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);
+    const resolved=dark?'dark':'light';
+    document.documentElement.dataset.theme=resolved;
+    document.documentElement.style.colorScheme=resolved;
+    const themeColor=document.querySelector('meta[name="theme-color"]');
+    if(themeColor) themeColor.setAttribute('content', dark ? '#0b1017' : '#f5f8fc');
+    document.documentElement.style.backgroundColor=dark ? '#0b1017' : '#f5f8fc';
+    document.body.style.backgroundColor=dark ? '#0b1017' : '#f5f8fc';
+    $('#themeSelect').value=pref;
   }
   applyTheme();matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{if(state.settings.theme==='system')applyTheme()});
   $('#themeSelect').onchange=e=>{state.settings.theme=e.target.value;persistSettings();applyTheme()};

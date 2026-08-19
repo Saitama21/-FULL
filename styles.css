@@ -10,7 +10,10 @@
   --good:#39c98a; --warn:#ffb349; --danger:#ff6673; --shadow:0 14px 38px rgba(0,0,0,.28);
 }
 *{box-sizing:border-box}
+html{color-scheme:light;background:#f5f8fc}
+html[data-theme="dark"]{color-scheme:dark;background:#0b1017}
 html,body{margin:0;min-height:100%;background:linear-gradient(180deg,var(--bg2),var(--bg));color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,Segoe UI,Arial,sans-serif;overflow:hidden}
+body{transition:background-color .18s ease,color .18s ease}
 body:before{content:"";position:fixed;inset:-20%;background:radial-gradient(circle at 15% 5%,rgba(69,145,255,.12),transparent 30%),radial-gradient(circle at 90% 15%,rgba(92,163,255,.08),transparent 26%);pointer-events:none}
 button,input,select{font:inherit}
 button{color:inherit}
