@@ -13,7 +13,7 @@
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/icon-180.png" />
   <link rel="icon" type="image/png" sizes="64x64" href="./assets/icons/favicon-64.png" />
-  <link rel="stylesheet" href="./styles.css?v=1.0.8" />
+  <link rel="stylesheet" href="./styles.css?v=1.0.8-debug1" />
 </head>
 <body>
   <div class="app-shell" id="appShell">
@@ -195,10 +195,11 @@
           <div class="setting-row"><div><b>Тактильный отклик</b><small>Короткая вибрация на поддерживаемых устройствах</small></div><input type="checkbox" id="hapticToggle" checked></div>
           <div class="setting-row"><div><b>Автосохранение</b><small>Последний результат хранится локально</small></div><input type="checkbox" id="autosaveToggle" checked></div>
         </div>
-        <div class="about-card glass">
+        <div class="about-card glass" id="aboutCard">
           <div class="app-icon-mini"><img src="./assets/icons/icon-180.png" alt="CNC Copilot"></div>
-          <div><b>CNC Copilot — Допуски</b><small>FULL offline PWA • v1.0.8</small></div>
+          <div><b>CNC Copilot — Допуски</b><small>FULL offline PWA • v1.0.8 DEBUG</small></div>
         </div>
+        <button class="secondary-btn full" id="dockDebugOpen" type="button">Диагностика Dock</button>
         <button class="danger-btn" id="clearAllData">Удалить локальные данные</button>
       </section>
     </main>
@@ -227,6 +228,24 @@
   </dialog>
 
   <div class="toast" id="toast"></div>
-  <script src="./app.js?v=1.0.8"></script>
+  <div class="dock-debug-panel glass" id="dockDebugPanel" hidden>
+    <div class="dock-debug-head">
+      <div><b>Dock Debug</b><small>Только диагностика — верх не меняется</small></div>
+      <button class="icon-btn" id="dockDebugClose" type="button" aria-label="Закрыть">×</button>
+    </div>
+    <pre id="dockDebugReadout">Сбор данных…</pre>
+    <label class="dock-debug-range">
+      <span>bottom: <b id="dockDebugOffsetValue">2</b> px</span>
+      <input id="dockDebugOffset" type="range" min="-60" max="20" step="1" value="2">
+    </label>
+    <div class="dock-debug-actions">
+      <button class="secondary-btn" id="dockDebugReset" type="button">Сбросить 2 px</button>
+      <button class="primary-btn" id="dockDebugCopy" type="button">Скопировать отчёт</button>
+    </div>
+    <div class="dock-debug-note">Двигай только ползунок <b>bottom</b>, пока Dock визуально не совпадёт с GetContact. Значение сохраняется на этом iPhone.</div>
+  </div>
+  <div class="dock-debug-viewport-line" id="dockDebugViewportLine" hidden></div>
+
+  <script src="./app.js?v=1.0.8-debug1"></script>
 </body>
 </html>
