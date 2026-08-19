@@ -16,7 +16,7 @@ button,input,select{font:inherit}
 button{color:inherit}
 .app-shell{height:100dvh;max-width:760px;margin:0 auto;position:relative;overflow:hidden}
 .glass{background:var(--card);backdrop-filter:blur(22px) saturate(1.25);-webkit-backdrop-filter:blur(22px) saturate(1.25);border:1px solid var(--line);box-shadow:var(--shadow)}
-.topbar{position:absolute;z-index:30;top:calc(var(--safe-top) + 4px);left:12px;right:12px;height:66px;border-radius:22px;padding:11px 14px;display:flex;align-items:center;justify-content:space-between}
+.topbar{position:absolute;z-index:30;top:0;left:12px;right:12px;height:calc(66px + var(--safe-top));border-radius:22px;padding:calc(var(--safe-top) + 11px) 14px 11px;display:flex;align-items:center;justify-content:space-between;overflow:hidden}
 .brand{font-weight:760;font-size:18px;letter-spacing:-.02em}.subbrand{margin-top:3px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}.status-dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
 .top-actions{display:flex;gap:8px}.icon-btn{width:38px;height:38px;border:none;border-radius:50%;background:var(--card-strong);border:1px solid var(--line);box-shadow:0 6px 18px rgba(30,60,90,.08);cursor:pointer;font-size:18px}
 .main-scroller{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:calc(var(--safe-top) + 86px) 12px calc(104px + var(--safe-bottom));scroll-behavior:smooth;overscroll-behavior-y:contain}
