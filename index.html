@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#f5f8fc" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b1017" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="CNC Допуски" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>CNC Copilot — Допуски</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./assets/icons/icon-180.png" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <header class="topbar glass">
+      <div>
+        <div class="brand">CNC Copilot</div>
+        <div class="subbrand"><span class="status-dot"></span> Офлайн‑режим</div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="installBtn" title="Установить" aria-label="Установить">⇩</button>
+        <button class="icon-btn" id="themeBtn" title="Тема" aria-label="Тема">◐</button>
+      </div>
+    </header>
+
+    <main id="mainScroller" class="main-scroller">
+      <section class="screen active" data-screen="home">
+        <div class="hero-card glass">
+          <div class="eyebrow">ЦЕХОВОЙ ПОМОЩНИК</div>
+          <h1>Допуски, резьбы и контроль</h1>
+          <p>Быстрые расчёты прямо у станка — без интернета.</p>
+          <div class="hero-actions">
+            <button class="primary-btn" data-jump="tolerances">Начать расчёт</button>
+            <button class="secondary-btn" id="newCalcHome">Новый расчёт</button>
+          </div>
+        </div>
+
+        <div class="section-title-row"><h2>Инструменты</h2><span class="muted">6 модулей</span></div>
+        <div class="quick-grid">
+          <button class="quick-card glass" data-jump="tolerances"><span class="quick-icon">◎</span><b>Допуски и посадки</b><small>ISO 286, цель, зазор/натяг</small></button>
+          <button class="quick-card glass" data-jump="threads"><span class="quick-icon">⌁</span><b>Резьбы</b><small>Метрическая геометрия</small></button>
+          <button class="quick-card glass" data-jump="roughness"><span class="quick-icon">≈</span><b>Шероховатость</b><small>Ra / Rz / Rt</small></button>
+          <button class="quick-card glass" data-jump="hardness"><span class="quick-icon">◇</span><b>Твёрдость</b><small>HRC / HB / HV / Rm</small></button>
+        </div>
+
+        <div class="section-title-row"><h2>Последний расчёт</h2><button class="text-btn" id="clearLast">Очистить</button></div>
+        <div class="empty-state glass" id="lastCalcCard">
+          <div class="empty-icon">⌖</div>
+          <b>Пока пусто</b>
+          <span>После первого расчёта здесь появится быстрый результат.</span>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="calc">
+        <div class="page-heading">
+          <div><div class="eyebrow">РЕЖИМЫ РЕЗАНИЯ</div><h1>Быстрый расчёт</h1></div>
+          <button class="icon-btn" id="newCuttingCalc" title="Очистить">↺</button>
+        </div>
+        <div class="glass card-block">
+          <div class="form-grid two">
+            <label>Диаметр, мм<input id="cutD" type="number" inputmode="decimal" placeholder="Напр. 50"></label>
+            <label>Vc, м/мин<input id="cutVc" type="number" inputmode="decimal" placeholder="Напр. 120"></label>
+            <label>Подача f, мм/об<input id="cutF" type="number" inputmode="decimal" placeholder="Напр. 0.15"></label>
+            <label>Глубина ap, мм<input id="cutAp" type="number" inputmode="decimal" placeholder="Напр. 1.5"></label>
+          </div>
+          <button class="primary-btn full" id="calcCutting">Рассчитать</button>
+        </div>
+        <div class="result-grid three" id="cutResults">
+          <div class="result-card glass"><span>Обороты S</span><strong>—</strong><small>об/мин</small></div>
+          <div class="result-card glass"><span>Подача F</span><strong>—</strong><small>мм/мин</small></div>
+          <div class="result-card glass"><span>Съём ap</span><strong>—</strong><small>мм</small></div>
+        </div>
+        <div class="info-note glass">Расчёт S = 1000·Vc/(π·D). Параметры материала и инструмента здесь не подбираются автоматически.</div>
+      </section>
+
+      <section class="screen" data-screen="tolerances">
+        <div class="page-heading compact">
+          <div><div class="eyebrow">ТОЧНОСТЬ И КОНТРОЛЬ</div><h1>Допуски и посадки</h1></div>
+          <button class="icon-btn" id="newToleranceCalc" title="Новый расчёт">↺</button>
+        </div>
+
+        <div class="segmented glass" id="toolTabs">
+          <button class="active" data-tool="shaft">Вал</button>
+          <button data-tool="hole">Отверстие</button>
+          <button data-tool="threads">Резьба</button>
+          <button data-tool="roughness">Шероховатость</button>
+          <button data-tool="hardness">Твёрдость</button>
+        </div>
+
+        <div class="tool-panel active" data-tool-panel="shaft">
+          <div class="glass card-block">
+            <div class="form-grid two">
+              <label>Номинальный размер, мм<input id="shaftNominal" type="number" inputmode="decimal" placeholder="Напр. 25"></label>
+              <label>Поле допуска<select id="shaftField"><option value="">Выберите</option></select></label>
+            </div>
+            <div class="inline-actions"><button class="primary-btn" id="calcShaft">Рассчитать</button><button class="secondary-btn" id="openReverseShaft">Обратный поиск</button></div>
+          </div>
+          <div class="deviation-results" id="shaftResults"></div>
+          <div class="glass card-block fit-card">
+            <h3>Посадка</h3>
+            <div class="form-grid two">
+              <label>Отверстие<select id="fitHole"><option value="">Выберите</option></select></label>
+              <label>Вал<select id="fitShaft"><option value="">Выберите</option></select></label>
+            </div>
+            <button class="secondary-btn full" id="calcFit">Рассчитать зазор / натяг</button>
+            <div id="fitResult" class="fit-result muted">Выберите поля допуска.</div>
+          </div>
+        </div>
+
+        <div class="tool-panel" data-tool-panel="hole">
+          <div class="glass card-block">
+            <div class="form-grid two">
+              <label>Номинальный размер, мм<input id="holeNominal" type="number" inputmode="decimal" placeholder="Напр. 30"></label>
+              <label>Поле допуска<select id="holeField"><option value="">Выберите</option></select></label>
+            </div>
+            <div class="inline-actions"><button class="primary-btn" id="calcHole">Рассчитать</button><button class="secondary-btn" id="openReverseHole">Обратный поиск</button></div>
+          </div>
+          <div class="deviation-results" id="holeResults"></div>
+        </div>
+
+        <div class="tool-panel" data-tool-panel="threads">
+          <div class="glass card-block">
+            <div class="form-grid two">
+              <label>Номинал резьбы<select id="threadSize"><option value="">Выберите M…</option></select></label>
+              <label>Шаг P, мм<select id="threadPitch"><option value="">Сначала номинал</option></select></label>
+            </div>
+            <button class="primary-btn full" id="calcThread">Рассчитать</button>
+          </div>
+          <div class="thread-results" id="threadResults"></div>
+        </div>
+
+        <div class="tool-panel" data-tool-panel="roughness">
+          <div class="glass card-block">
+            <div class="form-grid two">
+              <label>Радиус вершины rε, мм<input id="roughR" type="number" inputmode="decimal" placeholder="Напр. 0.8"></label>
+              <label>Подача f, мм/об<input id="roughF" type="number" inputmode="decimal" placeholder="Напр. 0.12"></label>
+            </div>
+            <button class="primary-btn full" id="calcRough">Рассчитать</button>
+          </div>
+          <div class="result-grid three" id="roughResults">
+            <div class="result-card glass"><span>Ra</span><strong>—</strong><small>мкм</small></div>
+            <div class="result-card glass"><span>Rz</span><strong>—</strong><small>мкм</small></div>
+            <div class="result-card glass"><span>Rt</span><strong>—</strong><small>мкм</small></div>
+          </div>
+          <div class="info-note glass">Теоретическая оценка по геометрии точения: Ra≈f²/(32·rε). Реальная поверхность зависит от жёсткости, пластинки, материала, СОЖ и вибраций.</div>
+        </div>
+
+        <div class="tool-panel" data-tool-panel="hardness">
+          <div class="glass card-block">
+            <div class="form-grid two">
+              <label>Исходная шкала<select id="hardScale"><option value="">Выберите шкалу</option><option>HRC</option><option>HB</option><option>HV</option></select></label>
+              <label>Значение<input id="hardValue" type="number" inputmode="decimal" placeholder="Напр. 45"></label>
+            </div>
+            <button class="primary-btn full" id="calcHardness">Пересчитать</button>
+          </div>
+          <div class="result-grid three" id="hardResults">
+            <div class="result-card glass"><span>HRC</span><strong>—</strong></div>
+            <div class="result-card glass"><span>HB</span><strong>—</strong></div>
+            <div class="result-card glass"><span>HV</span><strong>—</strong></div>
+          </div>
+          <div class="result-card glass wide-result"><span>Оценка Rm</span><strong id="hardRm">—</strong><small>МПа</small></div>
+          <div class="info-note glass">Ориентировочная интерполяция для сталей. Для сертификатов и приёмочного контроля используйте нормативную таблицу конкретного материала.</div>
+        </div>
+
+        <div class="glass card-block unit-card">
+          <div class="section-title-row"><h3>Конвертер единиц</h3><span class="muted">мм ↔ дюйм</span></div>
+          <div class="form-grid two">
+            <label>мм<input id="mmValue" type="number" inputmode="decimal" placeholder="Напр. 25.4"></label>
+            <label>дюйм<input id="inchValue" type="number" inputmode="decimal" placeholder="Напр. 1"></label>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="projects">
+        <div class="page-heading">
+          <div><div class="eyebrow">ЛОКАЛЬНО НА УСТРОЙСТВЕ</div><h1>Проекты</h1></div>
+          <button class="icon-btn" id="exportProjects" title="Экспорт">⇧</button>
+        </div>
+        <div class="project-toolbar glass">
+          <button class="primary-btn" id="saveCurrentProject">Сохранить текущий</button>
+          <label class="secondary-btn file-label">Импорт JSON<input type="file" id="importProjects" accept="application/json"></label>
+        </div>
+        <div id="projectsList" class="projects-list"></div>
+      </section>
+
+      <section class="screen" data-screen="profile">
+        <div class="page-heading"><div><div class="eyebrow">НАСТРОЙКИ</div><h1>Профиль</h1></div></div>
+        <div class="settings-list glass">
+          <div class="setting-row"><div><b>Тема</b><small>Системная / светлая / тёмная</small></div><select id="themeSelect"><option value="system">По системе</option><option value="light">Светлая</option><option value="dark">Тёмная</option></select></div>
+          <div class="setting-row"><div><b>Тактильный отклик</b><small>Короткая вибрация на поддерживаемых устройствах</small></div><input type="checkbox" id="hapticToggle" checked></div>
+          <div class="setting-row"><div><b>Автосохранение</b><small>Последний результат хранится локально</small></div><input type="checkbox" id="autosaveToggle" checked></div>
+        </div>
+        <div class="about-card glass">
+          <div class="app-icon-mini">⌖</div>
+          <div><b>CNC Copilot — Допуски</b><small>FULL offline PWA • v1.0.0</small></div>
+        </div>
+        <button class="danger-btn" id="clearAllData">Удалить локальные данные</button>
+      </section>
+    </main>
+
+    <nav class="dock glass" id="dock">
+      <button class="active" data-screen-target="home"><span>⌂</span><small>Главная</small></button>
+      <button data-screen-target="calc"><span>▦</span><small>Расчёт</small></button>
+      <button data-screen-target="tolerances"><span>◎</span><small>Допуски</small></button>
+      <button data-screen-target="projects"><span>▱</span><small>Проекты</small></button>
+      <button data-screen-target="profile"><span>♙</span><small>Профиль</small></button>
+    </nav>
+  </div>
+
+  <dialog id="reverseDialog" class="modal glass">
+    <form method="dialog" class="modal-inner">
+      <div class="modal-head"><div><div class="eyebrow">ПОИСК ПО ЧЕРТЕЖУ</div><h2>Обратный поиск допуска</h2></div><button class="icon-btn" value="cancel">×</button></div>
+      <div class="form-grid three">
+        <label>Номинал, мм<input id="revNominal" type="number" inputmode="decimal" placeholder="25"></label>
+        <label>Верх, мм<input id="revUpper" type="number" inputmode="decimal" placeholder="0.000"></label>
+        <label>Низ, мм<input id="revLower" type="number" inputmode="decimal" placeholder="-0.013"></label>
+      </div>
+      <button type="button" class="primary-btn full" id="runReverse">Найти поле допуска</button>
+      <div id="reverseResults" class="reverse-results"></div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast"></div>
+  <script src="./app.js"></script>
+</body>
+</html>
