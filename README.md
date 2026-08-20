@@ -63,3 +63,9 @@
 - Dock: bottom 2px, width 87%, height 68px, border 1px.
 - Numeric inputs keep editing caret after the existing value on focus.
 - Dock diagnostics removed from the release build.
+
+
+## v1.1.1 standalone top fix
+- iPhone 14 Pro standalone top geometry no longer reads `env(safe-area-inset-top)` for sizing.
+- Fixed calibrated signature: safe top 59px + bar 75px = 134px total; content scroller starts at 146px.
+- Dock unchanged: 2px / 87% / 68px / 1px.
