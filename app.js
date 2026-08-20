@@ -309,51 +309,33 @@
 
 
 
-  // Dock diagnostics: measure the real standalone viewport and calibrate only dock bottom.
-  (()=>{
-    const panel=$('#dockDebugPanel'), open=$('#dockDebugOpen'), close=$('#dockDebugClose');
-    const slider=$('#dockDebugOffset'), value=$('#dockDebugOffsetValue'), readout=$('#dockDebugReadout');
-    const line=$('#dockDebugViewportLine'), dock=$('#dock');
-    if(!panel||!open||!dock) return;
-    const KEY='cncDockDebugBottom';
-    const probe=document.createElement('div');
-    probe.style.cssText='position:fixed;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)';
-    document.body.appendChild(probe);
-    const px=v=>Number.parseFloat(v)||0;
-    function safeInsets(){const s=getComputedStyle(probe);return {top:px(s.paddingTop),right:px(s.paddingRight),bottom:px(s.paddingBottom),left:px(s.paddingLeft)}}
-    function currentOffset(){return Number.parseFloat(getComputedStyle(dock).bottom)||0}
-    function applyOffset(v){v=Math.max(-60,Math.min(20,Number(v)));dock.style.setProperty('bottom',`${v}px`,'important');slider.value=String(v);value.textContent=String(v);localStorage.setItem(KEY,String(v));requestAnimationFrame(update)}
-    function report(){
-      const vv=window.visualViewport, r=dock.getBoundingClientRect(), safe=safeInsets();
-      const visualBottom=vv ? vv.offsetTop+vv.height : window.innerHeight;
-      const displayMode=matchMedia('(display-mode: standalone)').matches ? 'standalone' : (navigator.standalone ? 'ios-standalone' : 'browser');
-      return [
-        `mode: ${displayMode}`,
-        `DPR: ${window.devicePixelRatio}`,
-        `screen: ${screen.width}×${screen.height}`,
-        `avail: ${screen.availWidth}×${screen.availHeight}`,
-        `inner: ${window.innerWidth}×${window.innerHeight}`,
-        `client: ${document.documentElement.clientWidth}×${document.documentElement.clientHeight}`,
-        `visualViewport: ${vv?`${vv.width.toFixed(1)}×${vv.height.toFixed(1)} offsetTop=${vv.offsetTop.toFixed(1)} scale=${vv.scale}`:'n/a'}`,
-        `safe: top=${safe.top} right=${safe.right} bottom=${safe.bottom} left=${safe.left}`,
-        `dock rect: top=${r.top.toFixed(1)} bottom=${r.bottom.toFixed(1)} h=${r.height.toFixed(1)}`,
-        `dock css bottom: ${currentOffset().toFixed(1)}px`,
-        `gap to inner bottom: ${(window.innerHeight-r.bottom).toFixed(1)}px`,
-        `gap to visual bottom: ${(visualBottom-r.bottom).toFixed(1)}px`,
-        `scrollY(main): ${$('#mainScroller')?.scrollTop||0}`
-      ].join('\n');
-    }
-    function update(){if(!panel.hidden) readout.textContent=report()}
-    function show(){panel.hidden=false;line.hidden=false;const saved=localStorage.getItem(KEY);applyOffset(saved===null?2:Number(saved));update();setTimeout(update,100)}
-    function hide(){panel.hidden=true;line.hidden=true}
-    open.addEventListener('click',show);close.addEventListener('click',hide);
-    slider.addEventListener('input',e=>applyOffset(e.target.value));
-    $('#dockDebugReset')?.addEventListener('click',()=>applyOffset(2));
-    $('#dockDebugCopy')?.addEventListener('click',async()=>{const t=report()+`\ncalibrated bottom: ${slider.value}px`;try{await navigator.clipboard.writeText(t);toast('Отчёт скопирован')}catch{window.prompt('Скопируйте отчёт:',t)}});
-    window.addEventListener('resize',update,{passive:true});
-    visualViewport?.addEventListener('resize',update,{passive:true});visualViewport?.addEventListener('scroll',update,{passive:true});
-    const saved=localStorage.getItem(KEY);if(saved!==null) applyOffset(Number(saved));
-  })();
+  // Stable device profile. Safari does not expose the model name, so we match
+  // the calibrated iPhone 14 Pro standalone viewport signature.
+  function applyDeviceProfile(){
+    const standalone=matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
+    const is14Pro=standalone && screen.width===393 && screen.height===852 && Math.abs(window.devicePixelRatio-3)<0.01;
+    document.documentElement.classList.toggle('device-iphone14pro',is14Pro);
+  }
+  applyDeviceProfile();
+  window.addEventListener('resize',applyDeviceProfile,{passive:true});
+
+  // iPhone numeric-entry rule: when an existing value receives focus,
+  // keep the insertion point after the number instead of before it.
+  document.querySelectorAll('input[type="number"]').forEach(input=>{
+    input.addEventListener('focus',()=>{
+      if(!input.value) return;
+      const value=input.value;
+      setTimeout(()=>{
+        try{ input.setSelectionRange(value.length,value.length); }
+        catch(_){
+          // iOS number inputs do not always expose selection APIs. Reassigning
+          // the same value while focused reliably places editing after it.
+          input.value='';
+          input.value=value;
+        }
+      },0);
+    });
+  });
 
   if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
 })();

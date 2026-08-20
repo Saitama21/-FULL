@@ -55,3 +55,11 @@
 - Все четыре угла скруглены радиусом 26 px.
 - `safe-area-inset-bottom` не участвует в `bottom`, `height` или `padding` самого Dock.
 - Верхняя шапка и зона Dynamic Island не изменялись.
+
+
+## v1.1.0 — iPhone 14 Pro calibrated profile
+- Standalone profile: 393×852, DPR 3.
+- Top bar: inset 0, base 75px, horizontal padding 13px, bottom padding 0, radius 34px, border 1px.
+- Dock: bottom 2px, width 87%, height 68px, border 1px.
+- Numeric inputs keep editing caret after the existing value on focus.
+- Dock diagnostics removed from the release build.
