@@ -69,3 +69,11 @@
 - iPhone 14 Pro standalone top geometry no longer reads `env(safe-area-inset-top)` for sizing.
 - Fixed calibrated signature: safe top 59px + bar 75px = 134px total; content scroller starts at 146px.
 - Dock unchanged: 2px / 87% / 68px / 1px.
+
+## v1.1.2 — Safari toolbar isolation
+- Dock перенесён внутрь `.app-shell`, как в проверенной сборке CNC Geometry v1.0.9.
+- `.app-shell` привязан к large/layout viewport (`100lvh`), а не к меняющемуся visual viewport Safari.
+- Dock теперь `position:absolute` внутри стабильной оболочки и не поднимается вслед за появлением/скрытием панели Safari.
+- `safe-area-inset-bottom` по-прежнему не участвует в `bottom`, `height` или `padding` Dock.
+- Для iPhone 14 Pro сохранена геометрия Dock: bottom 2px, width 87%, height 68px.
+- Обновлён cache key/service worker, чтобы iPhone не оставался на старом CSS.

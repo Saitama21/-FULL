@@ -13,7 +13,7 @@
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/icon-180.png" />
   <link rel="icon" type="image/png" sizes="64x64" href="./assets/icons/favicon-64.png" />
-  <link rel="stylesheet" href="./styles.css?v=1.1.1-standalonefix" />
+  <link rel="stylesheet" href="./styles.css?v=1.1.2-safari-dock" />
 </head>
 <body>
   <div class="app-shell" id="appShell">
@@ -197,21 +197,20 @@
         </div>
         <div class="about-card glass" id="aboutCard">
           <div class="app-icon-mini"><img src="./assets/icons/icon-180.png" alt="CNC Copilot"></div>
-          <div><b>CNC Copilot — Допуски</b><small>FULL offline PWA • v1.1.1 iPhone 14 Pro</small></div>
+          <div><b>CNC Copilot — Допуски</b><small>FULL offline PWA • v1.1.2 iPhone 14 Pro</small></div>
         </div>
         <button class="danger-btn" id="clearAllData">Удалить локальные данные</button>
       </section>
     </main>
 
-  </div>
-
-  <nav class="dock glass" id="dock" aria-label="Нижняя навигация">
+    <nav class="dock glass" id="dock" aria-label="Нижняя навигация">
     <button class="active" data-screen-target="home"><span>⌂</span><small>Главная</small></button>
     <button data-screen-target="calc"><span>▦</span><small>Расчёт</small></button>
     <button data-screen-target="tolerances"><span>◎</span><small>Допуски</small></button>
     <button data-screen-target="projects"><span>▱</span><small>Проекты</small></button>
     <button data-screen-target="profile"><span>♙</span><small>Профиль</small></button>
-  </nav>
+    </nav>
+  </div>
 
   <dialog id="reverseDialog" class="modal glass">
     <form method="dialog" class="modal-inner">
@@ -227,6 +226,6 @@
   </dialog>
 
   <div class="toast" id="toast"></div>
-  <script src="./app.js?v=1.1.1-standalonefix"></script>
+  <script src="./app.js?v=1.1.2-safari-dock"></script>
 </body>
 </html>
