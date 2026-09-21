@@ -97,15 +97,15 @@ label{display:flex;flex-direction:column;gap:7px;font-size:12px;color:var(--mute
 
 
 /* UI_CONTRACT_DOCK_V1 — Safari-independent dock */
-:root{--dock-bottom:7px;--dock-width:95%;--dock-h:68px}
-@media (min-width:390px) and (max-width:430px){:root{--dock-bottom:2px;--dock-width:87%;--dock-h:68px}}
+:root{--dock-bottom:7px;--dock-width:95%;--dock-height:68px}
+@media (min-width:390px) and (max-width:430px){:root{--dock-bottom:2px;--dock-width:87%;--dock-height:68px}}
 .dock{
   position:fixed!important;
   left:50%!important;
   right:auto!important;
   bottom:var(--dock-bottom)!important;
   width:min(var(--dock-width),736px)!important;
-  height:var(--dock-h)!important;
+  height:var(--dock-height)!important;
   transform:translateX(-50%) translateY(0);
 }
 .dock.hidden{
